@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../api/axios';
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
@@ -24,9 +25,7 @@ export const AuthProvider = ({ children }) => {
       // Check if user is already null, don't spam toasts
       setUser((currentUser) => {
         if (currentUser) {
-           import('react-hot-toast').then(({ default: toast }) => {
-             toast.error(e.detail?.message || 'Session expired or unauthorized access.');
-           });
+           toast.error(e.detail?.message || 'Session expired or unauthorized access.');
         }
         return null;
       });
