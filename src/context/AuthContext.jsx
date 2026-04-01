@@ -22,14 +22,11 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for 401/403 errors from the global API interceptor
     const handleAuthError = (e) => {
-      // Check if user is already null, don't spam toasts
-      setUser((currentUser) => {
-        if (currentUser) {
-           toast.error(e.detail?.message || 'Session expired or unauthorized access.');
-        }
-        return null;
-      });
+      toast.error(e.detail?.message || 'Session expired or unauthorized access.');
+      
+      setUser(null);
       localStorage.removeItem('user');
+      localStorage.removeItem('token'); // 🔥 add this too
     };
     window.addEventListener('auth-error', handleAuthError);
     return () => window.removeEventListener('auth-error', handleAuthError);
@@ -37,6 +34,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const res = await api.post('/auth/login', { username, password });
+    localStorage.setItem("token",res.data.token);
     
     // Assume res.data.user exists, containing { username, role, id, isBanned }
     // If backend doesn't return user info natively, we'll mock it based on inputs
@@ -54,17 +52,16 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password) => {
     const res = await api.post('/auth/register', { username, email, password });
-    return res.data;
   };
 
   const logout = async () => {
     try {
       await api.post('/auth/logout');
-    } catch (e) {
-      console.warn("Logout endpoint failed, clearing local state anyway", e);
-    }
-    setUser(null);
+    } catch (e) {console.log(e)}
+
     localStorage.removeItem('user');
+    localStorage.removeItem('token'); 
+    setUser(null);
   };
 
   return (

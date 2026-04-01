@@ -9,11 +9,18 @@ export const api = axios.create({
 });
 
 // Optional request interceptor if we ever need to append anything dynamically
-api.interceptors.request.use((config) => {
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Response interceptor to catch unauthorized access globally
 api.interceptors.response.use((response) => {
