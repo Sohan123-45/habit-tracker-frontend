@@ -180,19 +180,28 @@ const HabitDetail = () => {
     }
   };
 
-  if(loading) return <div className="page-container flex-center">Loading Data...</div>;
-  if(!habit) return <div className="page-container flex-center">Habit not found</div>;
+  if(loading) return (
+    <div className="page-container flex-center" style={{ minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ width: '40px', height: '40px', border: '3px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
+      <span style={{ color: 'var(--text-secondary)' }}>Loading data...</span>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+  if(!habit) return <div className="page-container flex-center" style={{ minHeight: '40vh', color: 'var(--text-secondary)' }}>Habit not found</div>;
 
   return (
     <div className="page-container" style={{ maxWidth: '900px' }}>
-      <button className="btn" onClick={() => navigate('/dashboard')} style={{ background: 'transparent', padding: 0, marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
+      <button className="btn" onClick={() => navigate('/dashboard')} style={{ background: 'transparent', padding: 0, marginBottom: '1.5rem', color: 'var(--text-secondary)', gap: '6px' }}
+        onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+      >
         <ArrowLeft size={20} /> Back to Dashboard
       </button>
 
       {/* Hero Section — Habit Details */}
       <motion.div 
         className="glass-panel" 
-        style={{ padding: '2rem', marginBottom: '2rem', position: 'relative', overflow: 'hidden', borderTop: `6px solid ${habit.color || 'var(--primary)'}` }}
+        style={{ padding: '2rem', marginBottom: '2rem', position: 'relative', borderTop: `4px solid ${habit.color || 'var(--accent)'}`, boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 60px ${habit.color || 'var(--accent)'}11` }}
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       >
         <div className="habit-hero-header">
@@ -215,9 +224,9 @@ const HabitDetail = () => {
                   onClick={handleUpdateName} 
                   style={{ 
                     width: '36px', height: '36px', borderRadius: '50%', border: 'none',
-                    background: habit.color || 'var(--primary)', color: 'white',
+                    background: habit.color || 'var(--accent)', color: '#0A0A0F',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 12px ${(habit.color || '#6366f1')}44`,
+                    cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 16px ${(habit.color || '#FF8C00')}44`,
                     transition: 'transform 0.15s'
                   }}
                 ><Check size={18}/></button>
@@ -225,8 +234,8 @@ const HabitDetail = () => {
                   onClick={() => setIsEditingName(false)} 
                   style={{ 
                     width: '36px', height: '36px', borderRadius: '50%', 
-                    border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', 
-                    color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '1px solid var(--border)', background: 'var(--bg-surface)', 
+                    color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', flexShrink: 0, transition: 'transform 0.15s'
                   }}
                 ><X size={18}/></button>
@@ -234,7 +243,10 @@ const HabitDetail = () => {
             ) : (
               <h1 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', wordBreak: 'break-word' }}>
                 {habit.name}
-                <button onClick={() => { setIsEditingName(true); setNewName(habit.name); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', flexShrink: 0 }}>
+                <button onClick={() => { setIsEditingName(true); setNewName(habit.name); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', flexShrink: 0, transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}
+                >
                   <Edit3 size={20} />
                 </button>
               </h1>
@@ -242,16 +254,16 @@ const HabitDetail = () => {
             
             <div className="habit-stats-row">
                <div>
-                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>CURRENT STREAK</div>
-                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--text-main)' }}>{habit.streak || 0} <span style={{fontSize: '0.6em', color: 'var(--text-muted)'}}>days</span></div>
+                 <div className="stat-label" style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Current Streak</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--accent)' }}>{habit.streak || 0} <span style={{fontSize: '0.6em', color: 'var(--text-tertiary)'}}>days</span></div>
                </div>
                <div>
-                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL ENTRIES</div>
-                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.count || 0}</div>
+                 <div className="stat-label" style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Total Entries</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>{habit.count || 0}</div>
                </div>
                <div>
-                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>LONGEST STREAK</div>
-                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.longestStreak || 0}</div>
+                 <div className="stat-label" style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Longest Streak</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>{habit.longestStreak || 0}</div>
                </div>
             </div>
           </div>
@@ -261,12 +273,12 @@ const HabitDetail = () => {
               <MoreVertical size={24} />
             </button>
             {showSettings && (
-              <div className="glass-panel" style={{ position: 'absolute', right: 0, top: '100%', marginTop: '8px', padding: '1rem', zIndex: 10, width: '200px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="glass-panel" style={{ position: 'absolute', right: 0, top: '100%', marginTop: '8px', padding: '1rem', zIndex: 10, width: '200px', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Theme Color</span>
-                  <input type="color" value={habit.color || '#FFB347'} onChange={handleColorChange} style={{ width: '32px', height: '32px', cursor: 'pointer', border: 'none', background: 'transparent' }} />
+                  <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>Theme Color</span>
+                  <input type="color" value={habit.color || '#FFB347'} onChange={handleColorChange} style={{ width: '32px', height: '32px', cursor: 'pointer', border: '2px solid var(--border)', borderRadius: '8px', background: 'transparent' }} />
                 </div>
-                <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)' }} />
+                <hr style={{ border: 'none', borderTop: '1px solid var(--border)' }} />
                 <button className="btn btn-danger" style={{ width: '100%', fontSize: '0.875rem' }} onClick={handleDeleteHabit}>
                   <Trash2 size={16} /> Delete Habit
                 </button>
@@ -278,14 +290,14 @@ const HabitDetail = () => {
 
       {/* History Log — Full Width Below */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>History Log</h3>
+        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>History Log</h3>
         {posts.length === 0 ? (
-          <div className="glass-panel flex-center" style={{ height: '200px', flexDirection: 'column', color: 'var(--text-muted)' }}>
+          <div className="glass-panel flex-center" style={{ height: '200px', flexDirection: 'column', color: 'var(--text-tertiary)' }}>
             <Search size={32} style={{ marginBottom: '1rem' }} />
             <p>No log entries found. Be the first to start the streak!</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <AnimatePresence>
               {posts.map((post) => (
                 <motion.div 
@@ -294,8 +306,8 @@ const HabitDetail = () => {
                   style={{ padding: '1.25rem' }}
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
                   onClick={() => setSelectedImagePost(post)}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--glass-bg)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-surface-hover)'; e.currentTarget.style.borderColor = 'var(--border-hover)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--glass-bg)'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}
                 >
                   <div className="log-card-thumb">
                     <img src={post.uri || 'https://via.placeholder.com/80'} alt="Log proof" />
@@ -319,9 +331,9 @@ const HabitDetail = () => {
                           onClick={() => handleUpdatePostTitle(post._id || post.id)}
                           style={{ 
                             width: '30px', height: '30px', borderRadius: '50%', border: 'none',
-                            background: habit.color || 'var(--primary)', color: 'white',
+                            background: habit.color || 'var(--accent)', color: '#0A0A0F',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 12px ${(habit.color || '#6366f1')}44`,
+                            cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 12px ${(habit.color || '#FF8C00')}44`,
                             transition: 'transform 0.15s'
                           }}
                         ><Check size={14}/></button>
@@ -329,22 +341,25 @@ const HabitDetail = () => {
                           onClick={() => setEditingPostId(null)}
                           style={{ 
                             width: '30px', height: '30px', borderRadius: '50%', 
-                            border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', 
-                            color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            border: '1px solid var(--border)', background: 'var(--bg-surface)', 
+                            color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             cursor: 'pointer', flexShrink: 0, transition: 'transform 0.15s'
                           }}
                         ><X size={14}/></button>
                       </div>
                     ) : (
-                      <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', wordBreak: 'break-word' }}>
+                      <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', wordBreak: 'break-word', color: 'var(--text-primary)' }}>
                         {post.title || new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}
-                        <button onClick={(e) => { e.stopPropagation(); setEditingPostId(post._id || post.id); setEditingPostTitle(post.title || ''); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', flexShrink: 0 }}>
+                        <button onClick={(e) => { e.stopPropagation(); setEditingPostId(post._id || post.id); setEditingPostTitle(post.title || ''); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', flexShrink: 0, transition: 'color 0.2s' }}
+                          onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
+                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}
+                        >
                           <Edit3 size={16} />
                         </button>
                       </h4>
                     )}
                     
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
                       <div>Created: {new Date(post.createdAt || post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                       {post.updatedAt && (
                         <div>Updated: {new Date(post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
@@ -353,8 +368,10 @@ const HabitDetail = () => {
                   </div>
                   <button 
                     className="btn btn-outline" 
-                    style={{ padding: '8px', color: 'var(--danger)', borderColor: 'transparent', flexShrink: 0 }} 
+                    style={{ padding: '8px', color: 'var(--danger)', borderColor: 'transparent', flexShrink: 0, transition: 'all 0.2s' }} 
                     onClick={(e) => { e.stopPropagation(); handleDeletePost(post._id || post.id); }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.2)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -368,7 +385,7 @@ const HabitDetail = () => {
       {/* Floating Action Button — Log Habit */}
       <motion.button
         className="fab"
-        style={{ background: habit.color || 'var(--primary)', boxShadow: `0 8px 24px ${(habit.color || '#6366f1')}66` }}
+        style={{ background: habit.color || 'var(--accent)', boxShadow: `0 8px 24px ${(habit.color || '#FF8C00')}55, 0 0 40px ${(habit.color || '#FF8C00')}15`, color: '#0A0A0F' }}
         onClick={() => setShowLogModal(true)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -387,34 +404,38 @@ const HabitDetail = () => {
           >
             <motion.div 
               className="glass-panel log-modal-content" 
-              style={{ padding: '2.5rem', background: 'var(--bg-color)', border: '1px solid var(--glass-border)' }}
+              style={{ padding: '2.5rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderTop: '1px solid rgba(255, 160, 50, 0.12)' }}
               initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
               onClick={e => e.stopPropagation()}
             >
               <button 
                 onClick={() => setShowLogModal(false)} 
-                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}
               >
                 <X size={24} />
               </button>
               
               <h2 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Target size={20} style={{ color: habit.color }} />Log Today's Proof
+                <Target size={20} style={{ color: habit.color || 'var(--accent)' }} />Log Today's Proof
               </h2>
               <p style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>Upload an image as proof of your daily habit completion.</p>
               
               <form onSubmit={handleLogSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div 
-                  style={{ border: `2px dashed ${file ? habit.color : 'var(--glass-border)'}`, borderRadius: '12px', padding: '2rem', textAlign: 'center', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', position: 'relative' }}
+                  style={{ border: `2px dashed ${file ? (habit.color || 'var(--accent)') : 'var(--border)'}`, borderRadius: '12px', padding: '2rem', textAlign: 'center', cursor: 'pointer', background: 'rgba(255, 255, 255, 0.02)', position: 'relative', transition: 'border-color 0.2s' }}
                   onClick={() => fileInputRef.current.click()}
+                  onMouseEnter={e => { if(!file) e.currentTarget.style.borderColor = 'var(--border-hover)'; }}
+                  onMouseLeave={e => { if(!file) e.currentTarget.style.borderColor = 'var(--border)'; }}
                 >
                   {file ? (
                     <img src={URL.createObjectURL(file)} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }} />
                   ) : (
                     <>
-                      <ImageIcon size={48} color="var(--text-muted)" style={{ margin: '0 auto 1rem' }} />
-                      <p style={{ fontWeight: 600, color: 'var(--text-main)' }}>Click to upload image</p>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Required proof for streak validity</p>
+                      <ImageIcon size={48} color="var(--text-tertiary)" style={{ margin: '0 auto 1rem' }} />
+                      <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Click to upload image</p>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Required proof for streak validity</p>
                     </>
                   )}
                   <input 
@@ -432,11 +453,10 @@ const HabitDetail = () => {
                     placeholder="Title / Note (Optional, defaults to date)" 
                     value={title} 
                     onChange={e => setTitle(e.target.value)}
-                    style={{ background: 'rgba(0,0,0,0.03)' }}
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={isLogging || !file} style={{ width: '100%', padding: '16px', background: habit.color, boxShadow: `0 8px 16px ${habit.color}44` }}>
+                <button type="submit" className="btn btn-primary" disabled={isLogging || !file} style={{ width: '100%', padding: '16px', background: habit.color || 'var(--accent)', boxShadow: `0 8px 20px ${habit.color || '#FF8C00'}33` }}>
                   {isLogging ? 'Uploading...' : 'Submit Entry'}
                 </button>
               </form>
@@ -451,7 +471,7 @@ const HabitDetail = () => {
           <motion.div 
             style={{ 
               position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-              background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+              background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem'
             }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -459,21 +479,21 @@ const HabitDetail = () => {
           >
             <button 
               onClick={() => setSelectedImagePost(null)} 
-              style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', zIndex: 1010 }}
+              style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', zIndex: 1010, transition: 'color 0.2s' }}
               onMouseEnter={(e) => e.currentTarget.style.color = 'white'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
             >
               <X size={36} />
             </button>
             <motion.img 
               src={selectedImagePost.uri} 
               alt={selectedImagePost.title}
-              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '16px', objectFit: 'contain', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}
+              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '16px', objectFit: 'contain', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}
               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
               onClick={e => e.stopPropagation()}
             />
             <motion.h3 
-              style={{ color: 'white', marginTop: '1.5rem', fontSize: '1.5rem', fontWeight: 600, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
+              style={{ color: 'var(--text-primary)', marginTop: '1.5rem', fontSize: '1.5rem', fontWeight: 600, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               onClick={e => e.stopPropagation()}
             >

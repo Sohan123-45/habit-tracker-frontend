@@ -21,27 +21,29 @@ const Navbar = () => {
   return (
     <nav className="nav-bar glass-panel" style={{ margin: '1rem 2rem' }}>
       <Link to="/" className="brand-logo text-gradient" style={{ textDecoration: 'none' }}>
-        HabitFlow
+        🔥 HabitFlow
       </Link>
       
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
         {user ? (
           <>
-            <span style={{ fontWeight: 600, marginRight: '0.5rem' }} className="hide-mobile">Hi, {user.username}</span>
+            <span style={{ fontWeight: 600, marginRight: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }} className="hide-mobile">
+              Hi, {user.username}
+            </span>
             
             {(user.role === 'admin') && (
-              <Link to="/admin" className="btn btn-outline" style={{ display: 'flex', gap: '6px', fontSize: '0.9rem', padding: '8px 16px' }}>
-                <ShieldAlert size={18} /> Admin
+              <Link to="/admin" className="btn btn-outline" style={{ display: 'flex', gap: '6px', fontSize: '0.85rem', padding: '8px 16px' }}>
+                <ShieldAlert size={16} /> Admin
               </Link>
             )}
             {(user.role === 'owner') && (
-              <Link to="/admin" className="btn btn-outline" style={{ display: 'flex', gap: '6px', fontSize: '0.9rem', padding: '8px 16px' }}>
-                <ShieldAlert size={18} /> Owner
+              <Link to="/admin" className="btn btn-outline" style={{ display: 'flex', gap: '6px', fontSize: '0.85rem', padding: '8px 16px' }}>
+                <ShieldAlert size={16} /> Owner
               </Link>
             )}
             
-            <button className="btn btn-danger" onClick={handleLogout} style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-              <LogOut size={16} /> Logout
+            <button className="btn btn-danger" onClick={handleLogout} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              <LogOut size={15} /> Logout
             </button>
           </>
         ) : (

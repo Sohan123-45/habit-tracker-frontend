@@ -10,7 +10,7 @@ const Dashboard = () => {
   
   const getFireConfig = (streak, baseColor) => {
     const s = streak || 0;
-    if (s === 0) return { size: 24, fill: "none", color: 'var(--text-muted)', pulse: false };
+    if (s === 0) return { size: 24, fill: "none", color: 'var(--text-tertiary)', pulse: false };
     if (s < 3) return { size: 28, fill: baseColor, color: baseColor, pulse: false };
     if (s < 7) return { size: 34, fill: baseColor, color: baseColor, pulse: true, duration: 1.5 };
     return { size: 40, fill: baseColor, color: baseColor, pulse: true, duration: 1.0, glow: true };
@@ -26,14 +26,9 @@ const Dashboard = () => {
 
   const fetchHabits = async () => {
     try {
-      // Assuming your habit router is mounted under /habits in Express, 
-      // router.get('/gethabits') maps to /habits/gethabits
       const res = await api.get('/habits/gethabits');
-      // Adjust according to backend response wrap
       setHabits(res.data?.habits || res.data || []);
     } catch (e) {
-      // Intentionally omitting console.error to prevent verbose 403 logs in console
-      // fallback for demo purposes if nothing comes back
       if(e.response?.status === 404) setHabits([]);
     } finally {
       setLoading(false);
@@ -68,7 +63,13 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) return <div className="page-container flex-center">Loading...</div>;
+  if (loading) return (
+    <div className="page-container flex-center" style={{ minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ width: '40px', height: '40px', border: '3px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
+      <span style={{ color: 'var(--text-secondary)' }}>Loading habits...</span>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   return (
     <div className="page-container">
@@ -82,12 +83,12 @@ const Dashboard = () => {
       {habits.length === 0 ? (
         <motion.div 
           className="glass-panel flex-center" 
-          style={{ flexDirection: 'column', height: '300px', gap: '1rem', textAlign: 'center' }}
+          style={{ flexDirection: 'column', height: '300px', gap: '1rem', textAlign: 'center', borderTop: '1px solid rgba(255, 160, 50, 0.08)' }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <CalendarDays size={64} color="var(--text-muted)" />
-          <h2 style={{ color: 'var(--text-muted)', marginBottom: 0 }}>Nothing here yet!</h2>
+          <CalendarDays size={64} color="var(--text-tertiary)" />
+          <h2 style={{ color: 'var(--text-secondary)', marginBottom: 0 }}>Nothing here yet!</h2>
           <p style={{ maxWidth: '400px' }}>Start tracking your goals by creating your very first habit. You can set custom colors and track your daily streaks.</p>
           <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setShowModal(true)}>Create Habit</button>
         </motion.div>
@@ -109,24 +110,28 @@ const Dashboard = () => {
                       padding: '1.5rem', 
                       position: 'relative', 
                       overflow: 'hidden',
-                      transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s'
+                      transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s, border-color 0.25s',
+                      borderTop: '1px solid rgba(255, 160, 50, 0.06)'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow = `0 12px 32px 0 ${habit.color}33`; 
+                      e.currentTarget.style.boxShadow = `0 12px 40px 0 ${habit.color || '#FFB347'}22, 0 0 30px rgba(255,140,0,0.04)`; 
+                      e.currentTarget.style.borderColor = `${habit.color || '#FFB347'}33`;
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
                       e.currentTarget.style.boxShadow = 'var(--glass-shadow)';
+                      e.currentTarget.style.borderColor = 'var(--glass-border)';
                     }}
                   >
                     <div style={{ 
                       position: 'absolute', 
-                      top: 0, left: 0, width: '6px', height: '100%', 
-                      backgroundColor: habit.color || '#FFB347'
+                      top: 0, left: 0, width: '5px', height: '100%', 
+                      backgroundColor: habit.color || '#FFB347',
+                      boxShadow: `0 0 12px ${habit.color || '#FFB347'}44`
                     }} />
                     
-                    <h2 style={{ color: 'var(--text-main)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', margin: 0, minHeight: '40px' }}>
+                    <h2 style={{ color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', margin: 0, minHeight: '40px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, overflow: 'hidden' }}>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{habit.name}</span>
                       </div>
@@ -135,7 +140,7 @@ const Dashboard = () => {
                           const fire = getFireConfig(habit.streak, habit.color || '#FFB347');
                           return (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: habit.streak > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: habit.streak > 0 ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>
                                 {habit.streak || 0}
                               </span>
                               <motion.div
@@ -156,12 +161,12 @@ const Dashboard = () => {
                         <button 
                           onClick={(e) => handleDeleteHabit(e, habit._id || habit.id)}
                           style={{ 
-                            background: 'rgba(239, 68, 68, 0.1)', border: 'none', cursor: 'pointer', 
+                            background: 'rgba(239, 68, 68, 0.08)', border: 'none', cursor: 'pointer', 
                             color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             width: '32px', height: '32px', borderRadius: '50%', transition: 'all 0.2s'
                           }}
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--danger)'; e.currentTarget.style.color = 'white'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = 'var(--danger)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; e.currentTarget.style.color = 'var(--danger)'; }}
                           title="Delete Habit"
                         >
                           <Trash2 size={16} />
@@ -171,14 +176,14 @@ const Dashboard = () => {
                     
                     <div className="dashboard-stat-row">
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em' }}>LONGEST STREAK</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                          {habit.longestStreak || 0} <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>days</span>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Longest Streak</div>
+                        <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                          {habit.longestStreak || 0} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-tertiary)' }}>days</span>
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em' }}>TOTAL LOGS</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>{habit.count || 0}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Total Logs</div>
+                        <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>{habit.count || 0}</div>
                       </div>
                     </div>
                   </div>
@@ -195,19 +200,23 @@ const Dashboard = () => {
           <motion.div 
             style={{ 
               position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-              background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 
+              background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem'
             }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setShowModal(false)}
           >
             <motion.div 
               className="glass-panel" 
-              style={{ width: '100%', maxWidth: '400px', padding: '2.5rem', position: 'relative', background: 'var(--bg-color)', border: '1px solid var(--glass-border)' }}
+              style={{ width: '100%', maxWidth: '420px', padding: '2.5rem', position: 'relative', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderTop: '1px solid rgba(255, 160, 50, 0.12)' }}
               initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+              onClick={e => e.stopPropagation()}
             >
               <button 
                 onClick={() => setShowModal(false)} 
-                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}
               >
                 <X size={24} />
               </button>
@@ -229,9 +238,9 @@ const Dashboard = () => {
                     <input 
                       type="color" 
                       value={newHabitColor} onChange={e => setNewHabitColor(e.target.value)} 
-                      style={{ width: '48px', height: '48px', padding: 0, border: 'none', borderRadius: '12px', cursor: 'pointer', background: 'transparent' }}
+                      style={{ width: '48px', height: '48px', padding: 0, border: '2px solid var(--border)', borderRadius: '12px', cursor: 'pointer', background: 'transparent' }}
                     />
-                    <span style={{ fontWeight: 600, color: newHabitColor, letterSpacing: '1px' }}>{newHabitColor.toUpperCase()}</span>
+                    <span style={{ fontWeight: 600, color: newHabitColor, letterSpacing: '1px', fontFamily: 'monospace' }}>{newHabitColor.toUpperCase()}</span>
                   </div>
                 </div>
                 <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem', padding: '14px' }}>

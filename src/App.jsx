@@ -36,20 +36,21 @@ function App() {
           position="bottom-right" 
           toastOptions={{
             style: {
-              background: 'var(--bg-card)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border)',
+              background: '#1A1A24',
+              color: '#F5F0E8',
+              border: '1px solid rgba(255, 160, 50, 0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
             },
             success: {
               iconTheme: {
-                primary: 'var(--success)',
-                secondary: 'white',
+                primary: '#22C55E',
+                secondary: '#0A0A0F',
               },
             },
             error: {
               iconTheme: {
-                primary: 'var(--danger)',
-                secondary: 'white',
+                primary: '#EF4444',
+                secondary: '#0A0A0F',
               },
             },
           }} 
