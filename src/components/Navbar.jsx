@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {LogOut, ShieldAlert} from 'lucide-react';
 import toast from 'react-hot-toast';
+import HabitFlowLogo from './HabitFlowLogo';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -20,8 +21,8 @@ const Navbar = () => {
 
   return (
     <nav className="nav-bar glass-panel" style={{ margin: '1rem 2rem' }}>
-      <Link to="/" className="brand-logo text-gradient" style={{ textDecoration: 'none' }}>
-        🔥 HabitFlow
+      <Link to="/" className="brand-logo" style={{ textDecoration: 'none' }}>
+        <HabitFlowLogo size={34} />
       </Link>
       
       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>

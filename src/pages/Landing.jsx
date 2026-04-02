@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { CheckCircle2, Zap, BarChart3, Target, ArrowRight } from 'lucide-react';
 import Footer from '../components/Footer';
+import HabitFlowLogo from '../components/HabitFlowLogo';
 
 const Landing = () => {
   const { user, loading } = useAuth();
@@ -27,6 +28,9 @@ const Landing = () => {
     <div className="page-container animate-fadeIn">
       {/* Hero Section */}
       <section className="hero-section">
+        <div className="hero-logo-wrapper">
+          <HabitFlowLogo size={72} withText={false} />
+        </div>
         <h1 className="hero-title">
           Master Your Life, <br />
           <span className="text-gradient">One Habit at a Time</span>

@@ -331,6 +331,28 @@ a  { color: var(--accent); }
   margin-bottom: 1.5rem;
   color: var(--text-primary);
 }
+
+/* ─── Hero Logo (Landing) ─── */
+.hero-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  animation: heroLogoFloat 5s ease-in-out infinite;
+}
+.hero-logo-wrapper svg {
+  filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.35))
+          drop-shadow(0 0 60px rgba(255, 140, 0, 0.15));
+  animation: logoGlowPulse 3s ease-in-out infinite;
+}
+
+@keyframes heroLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes logoGlowPulse {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(255,140,0,0.35)) drop-shadow(0 0 60px rgba(255,140,0,0.15)); }
+  50%      { filter: drop-shadow(0 0 30px rgba(255,140,0,0.5))  drop-shadow(0 0 80px rgba(255,140,0,0.25)); }
+}
 .hero-subtitle {
   font-size: clamp(1.05rem, 2.5vw, 1.25rem);
   max-width: 600px;
