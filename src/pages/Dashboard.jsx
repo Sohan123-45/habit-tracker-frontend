@@ -92,7 +92,7 @@ const Dashboard = () => {
           <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setShowModal(true)}>Create Habit</button>
         </motion.div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+        <div className="habits-grid">
           <AnimatePresence>
             {habits.map((habit, i) => (
               <motion.div
@@ -169,7 +169,7 @@ const Dashboard = () => {
                       </div>
                     </h2>
                     
-                    <div style={{ display: 'flex', gap: '3rem', marginTop: '2rem' }}>
+                    <div className="dashboard-stat-row">
                       <div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em' }}>LONGEST STREAK</div>
                         <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>

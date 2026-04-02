@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, Trash2, Edit3, Check, ArrowLeft, MoreVertical, Search, Target, X } from 'lucide-react';
+import { Image as ImageIcon, Trash2, Edit3, Check, ArrowLeft, MoreVertical, Search, Target, X, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const HabitDetail = () => {
@@ -13,7 +13,8 @@ const HabitDetail = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Forms
+  // Log Modal
+  const [showLogModal, setShowLogModal] = useState(false);
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
   const [isLogging, setIsLogging] = useState(false);
@@ -44,10 +45,13 @@ const HabitDetail = () => {
       if (event.key === 'Escape' && selectedImagePost) {
         setSelectedImagePost(null);
       }
+      if (event.key === 'Escape' && showLogModal) {
+        setShowLogModal(false);
+      }
     };
-    if (selectedImagePost) document.addEventListener("keydown", handleKeyDown);
+    if (selectedImagePost || showLogModal) document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImagePost]);
+  }, [selectedImagePost, showLogModal]);
   
   useEffect(() => {
     fetchData();
@@ -82,7 +86,7 @@ const HabitDetail = () => {
   const handleLogSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      alert("Image proof is required!");
+      toast.error("Image proof is required!");
       return;
     }
     
@@ -108,6 +112,7 @@ const HabitDetail = () => {
       setFile(null);
       setTitle('');
       if(fileInputRef.current) fileInputRef.current.value = '';
+      setShowLogModal(false);
       toast.success('Habit logged successfully!');
     } catch (e) {
       toast.error(e.response?.data?.message || "Failed to log habit");
@@ -180,23 +185,24 @@ const HabitDetail = () => {
 
   return (
     <div className="page-container" style={{ maxWidth: '900px' }}>
-      <button className="btn" onClick={() => navigate('/')} style={{ background: 'transparent', padding: 0, marginBottom: '2rem', color: 'var(--text-muted)' }}>
+      <button className="btn" onClick={() => navigate('/dashboard')} style={{ background: 'transparent', padding: 0, marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
         <ArrowLeft size={20} /> Back to Dashboard
       </button>
 
-      {/* Hero Section */}
+      {/* Hero Section — Habit Details */}
       <motion.div 
         className="glass-panel" 
-        style={{ padding: '2.5rem', marginBottom: '2rem', position: 'relative', overflow: 'hidden', borderTop: `6px solid ${habit.color || 'var(--primary)'}` }}
+        style={{ padding: '2rem', marginBottom: '2rem', position: 'relative', overflow: 'hidden', borderTop: `6px solid ${habit.color || 'var(--primary)'}` }}
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
+        <div className="habit-hero-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
             {isEditingName ? (
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '1rem' }}>
                 <input 
                   autoFocus
-                  className="input-field" 
+                  className="input-field habit-name-edit-input" 
+                  style={{ flex: '1 1 0', minWidth: 0 }}
                   value={newName} 
                   onChange={e => setNewName(e.target.value)}
                   onKeyDown={e => {
@@ -204,21 +210,37 @@ const HabitDetail = () => {
                     if (e.key === 'Escape') setIsEditingName(false);
                   }}
                   onBlur={() => setTimeout(() => setIsEditingName(false), 200)}
-                  style={{ fontSize: '2rem', fontWeight: 800, padding: '8px', width: '300px' }} 
                 />
-                <button className="btn btn-primary" onClick={handleUpdateName} style={{ padding: '12px' }}><Check size={20}/></button>
-                <button className="btn" onClick={() => setIsEditingName(false)} style={{ padding: '12px', background: 'var(--glass-bg)' }}><X size={20}/></button>
+                <button 
+                  onClick={handleUpdateName} 
+                  style={{ 
+                    width: '36px', height: '36px', borderRadius: '50%', border: 'none',
+                    background: habit.color || 'var(--primary)', color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 12px ${(habit.color || '#6366f1')}44`,
+                    transition: 'transform 0.15s'
+                  }}
+                ><Check size={18}/></button>
+                <button 
+                  onClick={() => setIsEditingName(false)} 
+                  style={{ 
+                    width: '36px', height: '36px', borderRadius: '50%', 
+                    border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', 
+                    color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', flexShrink: 0, transition: 'transform 0.15s'
+                  }}
+                ><X size={18}/></button>
               </div>
             ) : (
-              <h1 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h1 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', wordBreak: 'break-word' }}>
                 {habit.name}
-                <button onClick={() => { setIsEditingName(true); setNewName(habit.name); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                <button onClick={() => { setIsEditingName(true); setNewName(habit.name); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', flexShrink: 0 }}>
                   <Edit3 size={20} />
                 </button>
               </h1>
             )}
             
-            <div style={{ display: 'flex', gap: '3rem', marginTop: '1.5rem' }}>
+            <div className="habit-stats-row">
                <div>
                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>CURRENT STREAK</div>
                  <div style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--text-main)' }}>{habit.streak || 0} <span style={{fontSize: '1rem', color: 'var(--text-muted)'}}>days</span></div>
@@ -234,7 +256,7 @@ const HabitDetail = () => {
             </div>
           </div>
 
-          <div style={{ position: 'relative' }} ref={settingsRef}>
+          <div className="habit-settings-btn" style={{ position: 'relative', flexShrink: 0 }} ref={settingsRef}>
             <button className="btn btn-outline" style={{ padding: '8px' }} onClick={() => setShowSettings(!showSettings)}>
               <MoreVertical size={24} />
             </button>
@@ -254,123 +276,174 @@ const HabitDetail = () => {
         </div>
       </motion.div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(300px, 2fr)', gap: '2rem' }}>
-        
-        {/* Logger Section */}
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="glass-panel" style={{ padding: '2rem', height: 'fit-content' }}>
-          <h3><Target size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '8px', color: habit.color }} />Log Today's Proof</h3>
-          <form onSubmit={handleLogSubmit} style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-             
-             <div 
-               style={{ border: `2px dashed ${file ? habit.color : 'var(--glass-border)'}`, borderRadius: '12px', padding: '2rem', textAlign: 'center', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', position: 'relative' }}
-               onClick={() => fileInputRef.current.click()}
-             >
-               {file ? (
-                 <img src={URL.createObjectURL(file)} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }} />
-               ) : (
-                 <>
-                   <ImageIcon size={48} color="var(--text-muted)" style={{ margin: '0 auto 1rem' }} />
-                   <p style={{ fontWeight: 600, color: 'var(--text-main)' }}>Click to upload image</p>
-                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Required proof for streak validity</p>
-                 </>
-               )}
-               <input 
-                 type="file" 
-                 ref={fileInputRef} 
-                 onChange={e => setFile(e.target.files[0])} 
-                 style={{ display: 'none' }} 
-                 accept="image/*"
-               />
-             </div>
-
-             <div className="input-group" style={{ marginBottom: 0 }}>
-               <input 
-                 className="input-field" 
-                 placeholder="Title / Note (Optional, defaults to date)" 
-                 value={title} 
-                 onChange={e => setTitle(e.target.value)}
-                 style={{ background: 'rgba(0,0,0,0.03)' }}
-               />
-             </div>
-
-             <button type="submit" className="btn btn-primary" disabled={isLogging || !file} style={{ width: '100%', padding: '16px', background: habit.color, boxShadow: `0 8px 16px ${habit.color}44` }}>
-               {isLogging ? 'Uploading...' : 'Submit Entry'}
-             </button>
-          </form>
-        </motion.div>
-
-        {/* Timeline Section */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>History Log</h3>
-          {posts.length === 0 ? (
-            <div className="glass-panel flex-center" style={{ height: '200px', flexDirection: 'column', color: 'var(--text-muted)' }}>
-              <Search size={32} style={{ marginBottom: '1rem' }} />
-              <p>No log entries found. Be the first to start the streak!</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <AnimatePresence>
-                {posts.map((post) => (
-                  <motion.div 
-                    key={post._id || post.id} 
-                    className="glass-panel" 
-                    style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center', cursor: 'pointer', transition: 'background-color 0.2s' }}
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
-                    onClick={() => setSelectedImagePost(post)}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--glass-bg)' }}
-                  >
-                    <div style={{ width: '80px', height: '80px', flexShrink: 0, borderRadius: '12px', overflow: 'hidden', background: '#eaeaea' }}>
-                      <img src={post.uri || 'https://via.placeholder.com/80'} alt="Log proof" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      {editingPostId === (post._id || post.id) ? (
-                        <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '0.5rem' }}>
-                          <input 
-                            autoFocus
-                            className="input-field" 
-                            style={{ padding: '4px 8px', fontSize: '0.9rem' }}
-                            value={editingPostTitle}
-                            onChange={e => setEditingPostTitle(e.target.value)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') handleUpdatePostTitle(post._id || post.id);
-                              if (e.key === 'Escape') setEditingPostId(null);
-                            }}
-                            onBlur={() => setTimeout(() => setEditingPostId(null), 200)}
-                          />
-                          <button className="btn btn-primary" style={{ padding: '6px' }} onClick={() => handleUpdatePostTitle(post._id || post.id)}><Check size={16}/></button>
-                          <button className="btn" style={{ padding: '6px', background: 'var(--glass-bg)' }} onClick={() => setEditingPostId(null)}><X size={16}/></button>
-                        </div>
-                      ) : (
-                        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {post.title || new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}
-                          <button onClick={(e) => { e.stopPropagation(); setEditingPostId(post._id || post.id); setEditingPostTitle(post.title || ''); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                            <Edit3 size={16} />
-                          </button>
-                        </h4>
-                      )}
-                      
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        <div>Created: {new Date(post.createdAt || post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                        {post.updatedAt && (
-                          <div>Updated: {new Date(post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                        )}
+      {/* History Log — Full Width Below */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>History Log</h3>
+        {posts.length === 0 ? (
+          <div className="glass-panel flex-center" style={{ height: '200px', flexDirection: 'column', color: 'var(--text-muted)' }}>
+            <Search size={32} style={{ marginBottom: '1rem' }} />
+            <p>No log entries found. Be the first to start the streak!</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <AnimatePresence>
+              {posts.map((post) => (
+                <motion.div 
+                  key={post._id || post.id} 
+                  className="glass-panel log-card" 
+                  style={{ padding: '1.25rem' }}
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
+                  onClick={() => setSelectedImagePost(post)}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--glass-bg)' }}
+                >
+                  <div className="log-card-thumb">
+                    <img src={post.uri || 'https://via.placeholder.com/80'} alt="Log proof" />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {editingPostId === (post._id || post.id) ? (
+                      <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <input 
+                          autoFocus
+                          className="input-field" 
+                          style={{ padding: '4px 8px', fontSize: '0.9rem', flex: '1 1 0', minWidth: 0 }}
+                          value={editingPostTitle}
+                          onChange={e => setEditingPostTitle(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') handleUpdatePostTitle(post._id || post.id);
+                            if (e.key === 'Escape') setEditingPostId(null);
+                          }}
+                          onBlur={() => setTimeout(() => setEditingPostId(null), 200)}
+                        />
+                        <button 
+                          onClick={() => handleUpdatePostTitle(post._id || post.id)}
+                          style={{ 
+                            width: '30px', height: '30px', borderRadius: '50%', border: 'none',
+                            background: habit.color || 'var(--primary)', color: 'white',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer', flexShrink: 0, boxShadow: `0 4px 12px ${(habit.color || '#6366f1')}44`,
+                            transition: 'transform 0.15s'
+                          }}
+                        ><Check size={14}/></button>
+                        <button 
+                          onClick={() => setEditingPostId(null)}
+                          style={{ 
+                            width: '30px', height: '30px', borderRadius: '50%', 
+                            border: '1px solid var(--glass-border)', background: 'var(--glass-bg)', 
+                            color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer', flexShrink: 0, transition: 'transform 0.15s'
+                          }}
+                        ><X size={14}/></button>
                       </div>
+                    ) : (
+                      <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', wordBreak: 'break-word' }}>
+                        {post.title || new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}
+                        <button onClick={(e) => { e.stopPropagation(); setEditingPostId(post._id || post.id); setEditingPostTitle(post.title || ''); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', flexShrink: 0 }}>
+                          <Edit3 size={16} />
+                        </button>
+                      </h4>
+                    )}
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      <div>Created: {new Date(post.createdAt || post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                      {post.updatedAt && (
+                        <div>Updated: {new Date(post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                      )}
                     </div>
-                    <button 
-                      className="btn btn-outline" 
-                      style={{ padding: '8px', color: 'var(--danger)', borderColor: 'transparent' }} 
-                      onClick={(e) => { e.stopPropagation(); handleDeletePost(post._id || post.id); }}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-        </motion.div>
-      </div>
+                  </div>
+                  <button 
+                    className="btn btn-outline" 
+                    style={{ padding: '8px', color: 'var(--danger)', borderColor: 'transparent', flexShrink: 0 }} 
+                    onClick={(e) => { e.stopPropagation(); handleDeletePost(post._id || post.id); }}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Floating Action Button — Log Habit */}
+      <motion.button
+        className="fab"
+        style={{ background: habit.color || 'var(--primary)', boxShadow: `0 8px 24px ${(habit.color || '#6366f1')}66` }}
+        onClick={() => setShowLogModal(true)}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        title="Log Today's Proof"
+      >
+        <Plus size={28} />
+      </motion.button>
+
+      {/* Log Modal */}
+      <AnimatePresence>
+        {showLogModal && (
+          <motion.div 
+            className="log-modal-overlay"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setShowLogModal(false)}
+          >
+            <motion.div 
+              className="glass-panel log-modal-content" 
+              style={{ padding: '2.5rem', background: 'var(--bg-color)', border: '1px solid var(--glass-border)' }}
+              initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setShowLogModal(false)} 
+                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+              >
+                <X size={24} />
+              </button>
+              
+              <h2 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Target size={20} style={{ color: habit.color }} />Log Today's Proof
+              </h2>
+              <p style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>Upload an image as proof of your daily habit completion.</p>
+              
+              <form onSubmit={handleLogSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div 
+                  style={{ border: `2px dashed ${file ? habit.color : 'var(--glass-border)'}`, borderRadius: '12px', padding: '2rem', textAlign: 'center', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', position: 'relative' }}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  {file ? (
+                    <img src={URL.createObjectURL(file)} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }} />
+                  ) : (
+                    <>
+                      <ImageIcon size={48} color="var(--text-muted)" style={{ margin: '0 auto 1rem' }} />
+                      <p style={{ fontWeight: 600, color: 'var(--text-main)' }}>Click to upload image</p>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Required proof for streak validity</p>
+                    </>
+                  )}
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={e => setFile(e.target.files[0])} 
+                    style={{ display: 'none' }} 
+                    accept="image/*"
+                  />
+                </div>
+
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <input 
+                    className="input-field" 
+                    placeholder="Title / Note (Optional, defaults to date)" 
+                    value={title} 
+                    onChange={e => setTitle(e.target.value)}
+                    style={{ background: 'rgba(0,0,0,0.03)' }}
+                  />
+                </div>
+
+                <button type="submit" className="btn btn-primary" disabled={isLogging || !file} style={{ width: '100%', padding: '16px', background: habit.color, boxShadow: `0 8px 16px ${habit.color}44` }}>
+                  {isLogging ? 'Uploading...' : 'Submit Entry'}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Lightbox Modal */}
       <AnimatePresence>

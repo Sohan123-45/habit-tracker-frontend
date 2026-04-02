@@ -234,15 +234,277 @@ p { line-height: 1.6; color: var(--text-muted); }
 }
 
 /* Responsive Navbar Fixes */
+.hide-mobile { display: inline; }
+
 @media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+
   .nav-bar {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    margin: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0.75rem !important;
   }
+  .nav-bar .brand-logo { font-size: 1.25rem; }
+  
   .page-container {
     padding: 1rem;
+  }
+
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.25rem; }
+
+  .glass-panel {
+    border-radius: 12px;
+  }
+
+  /* Landing */
+  .hero-section { padding: 2rem 0.5rem; }
+  .hero-title { margin-bottom: 1rem; }
+  .features-grid { grid-template-columns: 1fr; gap: 1rem; padding: 2rem 0; }
+  .feature-card { padding: 1.5rem; }
+  .cta-section { padding: 3rem 1rem; margin: 2rem 0; border-radius: 16px; }
+  .cta-section h2 { font-size: 1.5rem !important; }
+
+  /* Footer */
+  .footer { padding: 2.5rem 1rem; }
+}
+
+@media (max-width: 480px) {
+  .nav-bar {
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0.5rem !important;
+    gap: 0.5rem;
+  }
+  .nav-bar .btn {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .page-container {
+    padding: 0.75rem;
+  }
+
+  h1 { font-size: 1.5rem; }
+
+  .features-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Habit Stats Row ─── */
+.habit-stats-row {
+  display: flex;
+  gap: 3rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .habit-stats-row {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .habit-stats-row {
+    gap: 1rem;
+  }
+  .habit-stats-row > div {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 0;
+  }
+}
+
+/* ─── Dashboard Habit Grid ─── */
+.habits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-stat-row {
+  display: flex;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .habits-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .dashboard-stat-row {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .habits-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .dashboard-stat-row {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .dashboard-stat-row > div {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 0;
+  }
+}
+
+/* ─── HabitDetail Page ─── */
+.habit-hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.habit-name-edit-input {
+  font-size: 2rem;
+  font-weight: 800;
+  padding: 8px;
+  width: 300px;
+}
+
+@media (max-width: 768px) {
+  .habit-hero-header {
+    position: relative;
+  }
+  .habit-hero-header .habit-settings-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .habit-name-edit-input {
+    width: 100% !important;
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .habit-name-edit-input {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* ─── History Log Cards ─── */
+.log-card {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.log-card-thumb {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eaeaea;
+}
+
+.log-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 480px) {
+  .log-card {
+    gap: 0.75rem;
+  }
+  .log-card-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+  }
+}
+
+/* ─── Floating Action Button ─── */
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  z-index: 100;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.5);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+  .fab {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem;
+  }
+}
+
+/* ─── Log Modal Overlay ─── */
+.log-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.log-modal-content {
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .log-modal-content {
+    max-width: 100%;
+  }
+}
+
+/* ─── Admin Table Responsive ─── */
+@media (max-width: 768px) {
+  .admin-table-wrap {
+    font-size: 0.85rem;
+  }
+  .admin-table-wrap th,
+  .admin-table-wrap td {
+    padding: 0.75rem 0.75rem !important;
+  }
+  .admin-table-wrap .btn {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
   }
 }
 
@@ -254,3 +516,4 @@ p { line-height: 1.6; color: var(--text-muted); }
 .animate-fadeIn {
   animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+

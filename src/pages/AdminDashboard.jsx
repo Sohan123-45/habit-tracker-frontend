@@ -119,7 +119,7 @@ const AdminDashboard = () => {
       </div>
 
       <motion.div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto' }} className="admin-table-wrap">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ background: 'rgba(0,0,0,0.05)', borderBottom: '1px solid var(--glass-border)' }}>
