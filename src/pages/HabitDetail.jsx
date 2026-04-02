@@ -242,16 +242,16 @@ const HabitDetail = () => {
             
             <div className="habit-stats-row">
                <div>
-                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>CURRENT STREAK</div>
-                 <div style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--text-main)' }}>{habit.streak || 0} <span style={{fontSize: '1rem', color: 'var(--text-muted)'}}>days</span></div>
+                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>CURRENT STREAK</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--text-main)' }}>{habit.streak || 0} <span style={{fontSize: '0.6em', color: 'var(--text-muted)'}}>days</span></div>
                </div>
                <div>
-                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL ENTRIES</div>
-                 <div style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.count || 0}</div>
+                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL ENTRIES</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.count || 0}</div>
                </div>
                <div>
-                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>LONGEST STREAK</div>
-                 <div style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.longestStreak || 0}</div>
+                 <div className="stat-label" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>LONGEST STREAK</div>
+                 <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 800 }}>{habit.longestStreak || 0}</div>
                </div>
             </div>
           </div>
