@@ -21,13 +21,20 @@ const Dashboard = () => {
   const [newHabitColor, setNewHabitColor] = useState('#FFB347');
 
   useEffect(() => {
-    const handleFocus = () => {
-      fetchHabits();
+    let isMounted = true;
+
+    const load = async () => {
+      if (isMounted) await fetchHabits();
     };
+
+    load();
+
+    const handleFocus = () => load();
 
     window.addEventListener("focus", handleFocus);
 
     return () => {
+      isMounted = false;
       window.removeEventListener("focus", handleFocus);
     };
   }, []);
