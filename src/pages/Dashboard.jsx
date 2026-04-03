@@ -21,7 +21,15 @@ const Dashboard = () => {
   const [newHabitColor, setNewHabitColor] = useState('#FFB347');
 
   useEffect(() => {
-    fetchHabits();
+    const handleFocus = () => {
+      fetchHabits();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
   }, []);
 
   const fetchHabits = async () => {
@@ -41,10 +49,10 @@ const Dashboard = () => {
     if(!window.confirm('Are you sure you want to delete this habit and all its logs?')) return;
     try {
       await api.delete(`/habits/${id}`);
-      setHabits(habits.filter(h => (h._id || h.id) !== id));
+      await fetchHabits();
       toast.success('Habit deleted successfully');
     } catch (err) {
-      toast.error("Failed to delete habit");
+      toast.error("Failed to delete habit"+err);
     }
   };
 
@@ -52,8 +60,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const res = await api.post('/habits', { name: newHabitName, color: newHabitColor });
-      const newHabit = res.data?.habit || { _id: Math.random().toString(), name: newHabitName, color: newHabitColor, count: 0, streak: 0 };
-      setHabits([newHabit, ...habits]);
+      await fetchHabits();
       setShowModal(false);
       setNewHabitName('');
       setNewHabitColor('#FFB347');
