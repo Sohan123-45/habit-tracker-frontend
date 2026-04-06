@@ -190,14 +190,14 @@ const Dashboard = () => {
                     
                     <div className="dashboard-stat-row">
                       <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Current Streak</div>
+                        <div style={{ fontSize: '2rem', fontWeight: 800, color: habit.color || 'var(--accent)' }}>{habit.streak || 0}</div>
+                      </div>
+                      <div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Longest Streak</div>
                         <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                           {habit.longestStreak || 0} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-tertiary)' }}>days</span>
                         </div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Total Logs</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>{habit.count || 0}</div>
                       </div>
                     </div>
                   </div>
